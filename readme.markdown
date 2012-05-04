@@ -23,5 +23,3 @@ You should also be able to query your engine with the following questions:
   Are any PLURAL-NOUN PLURAL-NOUN?
   Are any PLURAL-NOUN not PLURAL-NOUN?
   Describe PLURAL-NOUN.
-
-
