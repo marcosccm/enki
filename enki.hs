@@ -1,32 +1,27 @@
 type Noun = String
-data RuleType = All | None | Some deriving (Eq)
-data Rule = Rule Noun Noun RuleType
+data RuleType = All | None | Some deriving (Show, Eq)
+data Rule = Rule Noun RuleType deriving (Show, Eq)
+
+type Relation = (Noun, [Rule])
 type Question = Rule
 
-filterRules :: [Rule] -> RuleType -> [Rule]
-filterRules rules rtype = filter (isOfType) rules
-    where isOfType (Rule _ _ t) =  t == rtype
+reachbleRules :: [Relation] -> Noun -> [Rule]
+reachbleRules graph target  = dfs (rulesFor target graph)  graph
 
-hasRule :: Noun -> Noun -> [Rule] -> Bool
-hasRule x y rules = any (isRule) rules
-    where isRule (Rule n1 n2 _) =  n1 == x && n2 == y
+nounFor :: Rule -> Noun
+nounFor (Rule n _) = n
 
-makeQuestion :: Question -> [Rule] -> String
-makeQuestion (Rule x y All) xs 
-    | hasRule  x y alls = "Yes, all " ++ x ++ " are " ++ y
-    | otherwise         = "No"
-  where alls = filterRules xs All
+rulesFor :: Noun -> [Relation] -> [Rule]
+rulesFor noun graph = extract $ lookup noun graph
+  where extract (Just r) = r
+        extract Nothing  = []
 
-makeQuestion (Rule x y None) xs 
-    | hasRule  x y alls   = "No, all " ++ x ++ " are " ++ y
-    | hasRule  x y somes  = "No, some " ++ x ++ " are " ++ y
-    | otherwise        = "Yes, no " ++ x ++ " are " ++ y
-  where alls = filterRules xs All
-        somes = filterRules xs Some
+dfs :: [Rule] -> [Relation] -> [Rule]
+dfs start graph = visit start []
+  where visit [] visited = visited
+        visit (x:xs) visited
+          | elem x visited = visit xs visited
+          | otherwise      = visit (adjacents ++ xs) (x:visited)
+          where
+            adjacents = rulesFor (nounFor x) graph
 
-makeQuestion (Rule x y Some) xs 
-    | hasRule  x y somes = "Yes, some " ++ x ++ " are " ++ y
-    | hasRule  x y alls  = "Yes, all " ++ x ++ " are " ++ y
-    | otherwise        = "No"
-  where alls = filterRules xs All
-        somes = filterRules xs Some
