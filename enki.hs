@@ -1,3 +1,5 @@
+import Data.Maybe
+
 type Noun = String
 data RuleType = All | None | Some deriving (Show, Eq)
 data Rule = Rule Noun RuleType deriving (Show, Eq)
@@ -12,9 +14,7 @@ nounFor :: Rule -> Noun
 nounFor (Rule n _) = n
 
 rulesFor :: Noun -> [Relation] -> [Rule]
-rulesFor noun graph = extract $ lookup noun graph
-  where extract (Just r) = r
-        extract Nothing  = []
+rulesFor noun graph = fromMaybe [] $ lookup noun graph
 
 dfs :: [Rule] -> [Relation] -> [Rule]
 dfs start graph = visit start []
