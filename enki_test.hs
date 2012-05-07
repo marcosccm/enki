@@ -10,18 +10,33 @@ rule3 = Rule "eyes" All
 
 rel1 = ("animals", [rule3])
 rel2 = ("cats", [rule1, rule2])
+relations = [rel1, rel2]
 
-allCatsShouldBeAnimais = TestCase $ assertBool
+allCatsAreAnimals = Question "animals" "cats" All
+allCatsShouldBeAnimals = TestCase $ assertBool
   "all cats should be animals"
-   (rule2 `elem` (reachbleRules "cats" [rel1, rel2]))
+   (makeQuestion allCatsAreAnimals relations)
   
+allCatsHaveFur = Question "fur" "cats" All
 allCatsShouldHaveFur = TestCase $ assertBool
   "all cats should have fur"
-   (rule1 `elem` (reachbleRules "cats" [rel1, rel2]))
+   (makeQuestion allCatsHaveFur relations)
 
+allCatsHaveEyes = Question "eyes" "cats" All
 allCatsShouldHaveEyes = TestCase $ assertBool
   "all cats should have eyes"
-   (rule3 `elem` (reachbleRules "cats" [rel1, rel2]))
+   (makeQuestion allCatsHaveEyes relations)
 
-suite = TestList [allCatsShouldBeAnimais, allCatsShouldHaveFur, allCatsShouldHaveEyes]
+allCatsAreGreen = Question "green" "cats" All
+noCatShouldBeGreen = TestCase $ assertBool
+  "no cat should be green"
+   (not (makeQuestion allCatsAreGreen relations))
+
+allAnimalsHaveFur = Question "fur" "animals" All
+notAllAnimalsHaveFur = TestCase $ assertBool
+  "not all animals have fur"
+   (not (makeQuestion allAnimalsHaveFur relations))
+
+suite = TestList [allCatsShouldBeAnimals, allCatsShouldHaveFur, allCatsShouldHaveEyes, noCatShouldBeGreen, notAllAnimalsHaveFur]
+
 main = runTestTT suite
