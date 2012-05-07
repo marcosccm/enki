@@ -1,4 +1,11 @@
-module Enki where
+module Enki ( 
+  Noun,
+  RuleType (..),
+  Rule (..),
+  Relation,
+  Question,
+  reachbleRules
+) where
 
 import Data.Maybe
 
@@ -9,8 +16,8 @@ data Rule = Rule Noun RuleType deriving (Show, Eq)
 type Relation = (Noun, [Rule])
 type Question = Rule
 
-reachbleRules :: [Relation] -> Noun -> [Rule]
-reachbleRules graph target  = dfs (rulesFor target graph)  graph
+reachbleRules :: Noun -> [Relation] -> [Rule]
+reachbleRules target graph  = dfs (rulesFor target graph)  graph
 
 nounFor :: Rule -> Noun
 nounFor (Rule n _) = n
