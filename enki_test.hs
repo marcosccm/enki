@@ -3,39 +3,35 @@ module Enki_Test where
 import Enki 
 import Test.HUnit
 
-rule1 = Rule "fur" All
-rule2 = Rule "animals" All
+p1 = Property "cats" "animals" All
+p2 = Property "cats" "fur" All
+p3 = Property "animals" "eyes" All
+properties = [p1,p2,p3]
 
-rule3 = Rule "eyes" All
-
-rel1 = ("animals", [rule3])
-rel2 = ("cats", [rule1, rule2])
-relations = [rel1, rel2]
-
-allCatsAreAnimals = Question "animals" "cats" All
+allCatsAreAnimals = Question "cats" "animals" All
 allCatsShouldBeAnimals = TestCase $ assertBool
   "all cats should be animals"
-   (makeQuestion allCatsAreAnimals relations)
+   (makeQuestion allCatsAreAnimals properties)
   
-allCatsHaveFur = Question "fur" "cats" All
+allCatsHaveFur = Question "cats" "fur" All
 allCatsShouldHaveFur = TestCase $ assertBool
   "all cats should have fur"
-   (makeQuestion allCatsHaveFur relations)
+   (makeQuestion allCatsHaveFur properties)
 
-allCatsHaveEyes = Question "eyes" "cats" All
+allCatsHaveEyes = Question "cats" "eyes" All
 allCatsShouldHaveEyes = TestCase $ assertBool
   "all cats should have eyes"
-   (makeQuestion allCatsHaveEyes relations)
+   (makeQuestion allCatsHaveEyes properties)
 
-allCatsAreGreen = Question "green" "cats" All
+allCatsAreGreen = Question "cats" "green" All
 noCatShouldBeGreen = TestCase $ assertBool
   "no cat should be green"
-   (not (makeQuestion allCatsAreGreen relations))
+   (not (makeQuestion allCatsAreGreen properties))
 
-allAnimalsHaveFur = Question "fur" "animals" All
+allAnimalsHaveFur = Question "animals" "fur" All
 notAllAnimalsHaveFur = TestCase $ assertBool
   "not all animals have fur"
-   (not (makeQuestion allAnimalsHaveFur relations))
+   (not (makeQuestion allAnimalsHaveFur properties))
 
 suite = TestList [allCatsShouldBeAnimals, allCatsShouldHaveFur, allCatsShouldHaveEyes, noCatShouldBeGreen, notAllAnimalsHaveFur]
 

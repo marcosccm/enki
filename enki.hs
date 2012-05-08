@@ -1,54 +1,50 @@
 module Enki ( 
-  Noun,
-  RuleType (..),
-  Rule (..),
+  Subject,
+  Adjective,
+  Quantifier (..),
+  Property (..),
   Question (..),
   Answer,
-  Relation,
   makeQuestion
 ) where
 
 import Data.Maybe
 import Data.List
 
-type Noun = String
-data RuleType = All | None | Some deriving (Show, Eq, Ord)
-data Rule = Rule Noun RuleType deriving (Show, Eq)
-data Question = Question Noun Noun RuleType deriving (Show, Eq)
-
+type Subject = String
+type Adjective = String
+data Quantifier = All | None | Some deriving (Show, Eq, Ord)
+data Property = Property { subject :: Subject, adjective :: Adjective, quantifier :: Quantifier } deriving (Show, Eq) 
+data Question = Question Subject Adjective Quantifier
 type Answer = Bool
-type Relation = (Noun, [Rule])
 
-makeQuestion :: Question -> [Relation] -> Answer
-makeQuestion (Question n1 n2 rtype) graph
-    | rule /= Nothing && rtype <= (ruleType rule) = True
-    | otherwise                              = False
-    where rule = extractRule n1 n2 graph
-          ruleType (Just (Rule _ r)) = r
+makeQuestion :: Question -> [Property] -> Answer
+makeQuestion question graph = question `isAnsweredBy` foundProperty
+  where foundProperty = findProperty question graph
 
-extractRule :: Noun -> Noun -> [Relation] -> Maybe Rule
-extractRule target origin graph = find hasTarget rules
-  where hasTarget x = target == (nounFor x)
-        rules = (reachbleRules origin graph)
+findProperty :: Question -> [Property] -> Maybe Property
+findProperty (Question subj adj _) graph = find (hasAdjective adj) rules
+  where rules = (dfs subj graph)
 
-reachbleRules :: Noun -> [Relation] -> [Rule]
-reachbleRules target graph  = dfs (rulesFor target graph)  graph
-
-nounFor :: Rule -> Noun
-nounFor (Rule n _) = n
-
-ruleTypeFor :: Rule -> RuleType
-ruleTypeFor (Rule _ r) = r
-
-rulesFor :: Noun -> [Relation] -> [Rule]
-rulesFor noun graph = fromMaybe [] $ lookup noun graph
-
-dfs :: [Rule] -> [Relation] -> [Rule]
-dfs start graph = visit start []
+dfs :: Subject -> [Property] -> [Property]
+dfs subj graph = visit (rulesFor subj graph) []
   where visit [] visited = visited
         visit (x:xs) visited
           | elem x visited = visit xs visited
           | otherwise      = visit (adjacents ++ xs) (x:visited)
           where
-            adjacents = rulesFor (nounFor x) graph
+            adjacents = (rulesFor (adjective x) graph)
+
+rulesFor :: Subject -> [Property] -> [Property]
+rulesFor subj graph = filter (hasSubject subj) graph
+
+hasSubject :: Subject -> Property -> Bool
+hasSubject target x = target == (subject x)
+
+hasAdjective :: Adjective -> Property -> Bool
+hasAdjective target x = target == (adjective x)
+
+isAnsweredBy :: Question -> Maybe Property -> Bool
+isAnsweredBy _ Nothing = False
+isAnsweredBy (Question _ _ q) (Just property)  = q <= (quantifier property)
 
