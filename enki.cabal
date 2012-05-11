@@ -9,9 +9,11 @@ Build-Type:          Simple
 Cabal-Version:       >=1.8
 
 Library
-  hs-source-dirs:    src
+  hs-source-dirs: src
   build-depends: HUnit
-  exposed-modules: Enki
+  exposed-modules: 
+    Enki,
+    Enki.Parser
   build-depends:     
     base                    > 3 && < 5
 
