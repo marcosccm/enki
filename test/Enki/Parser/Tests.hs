@@ -6,6 +6,13 @@ import Test.Framework (defaultMain, testGroup)
 import Test.Framework.Providers.HUnit
 import Test.HUnit
 
-tests = [ testCase "parses an all property" parseAll ]
+tests = [ testCase "parses an all property" parseAllProp
+        , testCase "parses all quantifier"  parseAll 
+        , testCase "parses some quantifier"  parseSome 
+        , testCase "parses none quantifier"  parseNone ]
 
-parseAll = (parseProperty "all cats are green") @=? Property "cats" "green" All
+parseAllProp = Property "cats" "green" All @=? (parseProperty "all cats are green") 
+
+parseAll  = All  @=? (parseQuantifier "all")
+parseSome = Some @=? (parseQuantifier "some")
+parseNone = None @=? (parseQuantifier "none")
