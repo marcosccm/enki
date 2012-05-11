@@ -17,26 +17,16 @@ p3 = Property "animals" "eyes" All
 properties = [p1,p2,p3]
 
 allCatsAreAnimals = Question "cats" "animals" All
-allCatsShouldBeAnimals = assertBool
-  "all cats should be animals"
-   (makeQuestion allCatsAreAnimals properties)
+allCatsShouldBeAnimals = (makeQuestion allCatsAreAnimals properties) @=? True
   
 allCatsHaveFur = Question "cats" "fur" All
-allCatsShouldHaveFur = assertBool
-  "all cats should have fur"
-   (makeQuestion allCatsHaveFur properties)
+allCatsShouldHaveFur = (makeQuestion allCatsHaveFur properties) @=? True
 
 allCatsHaveEyes = Question "cats" "eyes" All
-allCatsShouldHaveEyes = assertBool
-  "all cats should have eyes"
-   (makeQuestion allCatsHaveEyes properties)
+allCatsShouldHaveEyes = (makeQuestion allCatsHaveEyes properties) @=? True
 
 allCatsAreGreen = Question "cats" "green" All
-noCatShouldBeGreen = assertBool
-  "no cat should be green"
-   (not (makeQuestion allCatsAreGreen properties))
+noCatShouldBeGreen = (makeQuestion allCatsAreGreen properties) @=? False
 
 allAnimalsHaveFur = Question "animals" "fur" All
-notAllAnimalsHaveFur = assertBool
-  "not all animals have fur"
-   (not (makeQuestion allAnimalsHaveFur properties))
+notAllAnimalsHaveFur = (makeQuestion allAnimalsHaveFur properties) @=? False
