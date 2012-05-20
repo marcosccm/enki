@@ -15,7 +15,7 @@ type Subject = String
 type Adjective = String
 data Quantifier = All | None | Some deriving (Show, Eq, Ord)
 data Property = Property { subject :: Subject, adjective :: Adjective, quantifier :: Quantifier } deriving (Show, Eq) 
-data Question = Question Subject Adjective Quantifier
+data Question = Question Subject Adjective Quantifier deriving (Show, Eq)
 type Answer = Bool
 
 makeQuestion :: Question -> [Property] -> Answer

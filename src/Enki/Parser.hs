@@ -2,6 +2,13 @@ module Enki.Parser where
 
 import Enki
 
+parseQuestion :: String -> Question
+parseQuestion text = Question subj adj quantifier
+  where components = words text
+        subj       = components !! 2
+        adj        = init $ components !! 3
+        quantifier = parseQuantifier $ components !! 1
+
 parseProperty :: String -> Property
 parseProperty propertyText = Property subj adj quantifier
   where components = words propertyText
@@ -12,6 +19,8 @@ parseProperty propertyText = Property subj adj quantifier
 parseQuantifier :: String -> Quantifier
 parseQuantifier "all"  = All
 parseQuantifier "some" = Some
+parseQuantifier "any"  = Some
 parseQuantifier "none" = None
+parseQuantifier "no"   = None
 parseQuantifier _      = error "Unknown quantifier"
 
