@@ -2,6 +2,16 @@ module Enki.Parser where
 
 import Enki
 
+parseEntry :: String -> String
+parseEntry entry
+    | entry `beginsWith` quantifiers = show $ parseProperty entry
+    | entry `beginsWith` questions   = show $ parseQuestion entry
+    | otherwise                      = "WTF!?"
+    where
+      beginsWith entry xs = any (`isPrefixOf` entry) xs
+      quantifiers = ["all", "some", "any", "none"]
+      questions   = ["are"]
+
 parseQuestion :: String -> Question
 parseQuestion text = Question subj adj quantifier
   where components = words text
